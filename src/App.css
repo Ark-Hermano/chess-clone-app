@@ -1,0 +1,38 @@
+.house-cell {
+  width: 12.5%;
+  height: 12.5%;
+}
+
+.table {
+  height: 300px;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.house-cell {
+  width: 12.5%;
+  height: 12.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.piece {
+  width: 80%;
+  height: 80%;
+  background-color: azure;
+}
+
+.piece.dark {
+  background: black;
+  color: azure;
+}
+
+.black-cicle {
+  width: 50%;
+  height: 50%;
+  border-radius: 100%;
+  background-color: rgba(0, 0, 0, .1);
+}
