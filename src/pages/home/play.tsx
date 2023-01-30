@@ -12,11 +12,14 @@ const style = {
 }
 
 export const Play: FC = () => {
+  const [reset, setReset] = useState<any[]>([])
+
   const [houses, setHouses] = useState<any[]>([])
   const [modal, setModal] = useState<any>(false)
   const [promotionPeao, setPromotionPeao] = useState<any>()
-
-
+  const [historic, setHistoric] = useState<any[]>([])
+  const [houseSnap, setHouseSnap] = useState<any[]>([])
+  const [historicIndex, setHistoricIndex] = useState<any>(historic.length - 1)
   const [state, setState] = useState<boolean>(false)
   const [turn, setTurn] = useState<any>('top')
   const [loading, setLoading] = useState<boolean>(true)
@@ -92,7 +95,7 @@ export const Play: FC = () => {
       houses.push(object)
       index++
     };
-
+    setReset(houses)
     setLoading(false)
   }, [])
 
@@ -104,7 +107,8 @@ export const Play: FC = () => {
 
   const dropFunction = (monitor: any, index: any, setTurn: any) => {
 
-
+    console.log({ historichoouses: houses })
+    const newHouses = [...houses]
     ///////////attarck//////
     if (houses[index]?.piece && houses[index]?.piece === monitor.initialPosition) {
       return false
@@ -126,6 +130,9 @@ export const Play: FC = () => {
 
         return house
       })
+
+      historic.push({ newHouses: [...houseSnap], captured: true, piece: monitor, from: houses[monitor?.position].x + " - " + houses[monitor?.position].y, to: houses[index].x + " - " + houses[index].y })
+      setHistoric([...historic])
       setHouses([...houses])
 
       return true
@@ -144,13 +151,12 @@ export const Play: FC = () => {
         houses[index + 8].piece = null
       }
 
-
-
       houses[index].piece = null
       houses[monitor?.position].piece = null
       houses[index].piece = monitor
 
-      if (houses[index].onPromotion) {
+
+      if (houses[index].promotion) {
         handlePromotion(monitor)
       }
 
@@ -182,25 +188,26 @@ export const Play: FC = () => {
       })
 
       houses.map((house) => {
-
         house.roqueToRight = false
         house.roqueToLeft = false
-
-
         return house
       })
 
-
+      historic.push({ newHouses: [...houseSnap], captured: false, piece: monitor, from: houses[monitor?.position].x + " - " + houses[monitor?.position].y, to: houses[index].x + " - " + houses[index].y })
+      setHistoric([...historic])
       setHouses([...houses])
 
       return true
     }
 
+
   }
 
   useEffect(() => {
 
-  }, [modal])
+    console.log({ historicoativado: houses })
+    setHouseSnap(houses)
+  }, [modal, houses])
 
 
 
@@ -225,13 +232,37 @@ export const Play: FC = () => {
   }
 
   const handleChangePiecePromotion = (text: string) => {
+    houses.find((house: any) => {
+
+      if (house.position === promotionPeao.position) {
+        house.piece.text = text
+
+      }
+
+    })
+
+    setModal(false)
+    setHouses([...houses])
+  }
+
+  const handleGoHistory = () => {
+    setHouses([...historic[historicIndex + 1].houses])
 
   }
 
-  console.log({ modal })
-  console.log({ promotionPeao })
+  const handleUndoHistory = () => {
+    setHouses([...historic[historicIndex - 1].houses])
+  }
 
+  const handleGoToIndexHistory = (index: number) => {
 
+    console.log({ isIdentical: houses === historic[index].houses })
+
+    setHistoricIndex(index)
+    setHouses([...historic[index].houses])
+  }
+
+  console.log({ houses, historic: historic })
 
   return (
     <>
@@ -251,15 +282,33 @@ export const Play: FC = () => {
         switchState()
 
       }}>{`${turn}`}</button>
-      <Board
-        returnState={returnState}
-        dropFunction={dropFunction}
-        switchState={switchState}
-        houses={houses}
-        setHouses={setHouses}
-        setTurn={setTurn}
-        turn={turn}
-      />
+      <div className="">
+        <Board
+          returnState={returnState}
+          dropFunction={dropFunction}
+          handlePromotion={handlePromotion}
+          switchState={switchState}
+          houses={houses}
+          setHouses={setHouses}
+          setTurn={setTurn}
+          turn={turn}
+        />
+
+        {historic.map((item, index) => (
+          <div>
+            <button onClick={() => handleGoToIndexHistory(index)}>
+              <div>{item.from}</div>
+              <div>{item.to}</div>
+              <div>{item.piece.text}</div>
+              <div>{item.newHouses[0]?.piece?.text}</div>
+
+            </button>
+          </div>
+        ))}
+
+        <button onClick={handleGoHistory}>go</button>
+        <button onClick={handleUndoHistory}>undo</button>
+      </div>
     </>
   )
 }

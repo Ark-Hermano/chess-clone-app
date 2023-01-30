@@ -10,6 +10,7 @@ const Board = ({
   turn,
   setTurn,
   returnState,
+  handlePromotion,
   switchState
 }: any) => {
 
@@ -1132,6 +1133,7 @@ const Board = ({
                 cord={{ x: house.x, y: house.y, ...house }}
                 house={house}
                 dropFunction={dropFunction}
+                handlePromotion={handlePromotion}
                 item={house.piece}
                 validateMoves={validateMoves}
               >

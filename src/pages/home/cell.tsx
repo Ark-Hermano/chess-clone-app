@@ -16,7 +16,8 @@ const Cell = ({
   setState,
   state,
   item,
-  validateMoves
+  validateMoves,
+  handlePromotion
 }: any) => {
 
   const [first, setfirst] = useState<any>()
@@ -155,8 +156,6 @@ const Cell = ({
     },
     drop: (monitor) => {
 
-      console.log({ monitor })
-
       dropFunction(monitor, index, setTurn)
     },
   }))
@@ -164,8 +163,6 @@ const Cell = ({
 
   return (
     <div ref={drop} onDragStartCapture={(e) => {
-      houses.map((house: any) => house.highlighted = false)
-
       if (turn !== item.initialPosition) {
         e.preventDefault()
       } else {
